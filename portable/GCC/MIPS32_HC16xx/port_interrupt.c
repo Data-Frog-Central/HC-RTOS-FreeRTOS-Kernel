@@ -187,7 +187,7 @@ int xPortInterruptInstallISR(uint32_t irq, void (*fn)(uint32_t), uint32_t param)
 
 int xPortInterruptInstallISR2(uint32_t irq, int (*fn)(int, void *), void *dev)
 {
-	return __xPortInterruptInstallISR(irq, (void (*)(uint32_t))fn, (uint32_t)dev, 1);
+	return __xPortInterruptInstallISR(irq, (void (*)(uint32_t))(uintptr_t)fn, (uint32_t)dev, 1);
 }
 
 UBaseType_t uxPortInterruptSetInterruptMaskFromISR(void)
@@ -335,7 +335,7 @@ static int prvDoIrq(uint32_t irq_no)
 			param = __isrcb->param;
 			proc(param);
 		} else {
-			proc2 = (int (*)(int, void *))__isrcb->proc;
+			proc2 = (int (*)(int, void *))(uintptr_t)__isrcb->proc;
 			param = __isrcb->param;
 			proc2((int)irq_no, (void *)param);
 		}
